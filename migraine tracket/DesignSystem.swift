@@ -156,6 +156,115 @@ struct SoftBarChart: View {
     }
 }
 
+struct MonthlyTrendCalendar: View {
+    let month: Date
+    let dailySeverity: [Date: Int]
+    var tint: Color = CalmTheme.lavender
+
+    private let calendar = Calendar.current
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(month.formatted(.dateTime.month(.wide).year()))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
+                ForEach(weekdaySymbols, id: \.self) { symbol in
+                    Text(symbol)
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityHidden(true)
+                }
+
+                ForEach(Array(monthCells.enumerated()), id: \.offset) { _, cell in
+                    Group {
+                        if let date = cell.date {
+                            Text("\(calendar.component(.day, from: date))")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(cell.severity > 0 ? .white : .primary)
+                                .frame(maxWidth: .infinity, minHeight: 34)
+                                .background(backgroundColor(for: cell.severity), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .stroke(cell.isToday ? CalmTheme.coral : .clear, lineWidth: 1.5)
+                                }
+                                .accessibilityLabel(accessibilityLabel(for: cell))
+                        } else {
+                            Color.clear
+                                .frame(height: 34)
+                                .accessibilityHidden(true)
+                        }
+                    }
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Monthly migraine trend calendar")
+    }
+
+    private var weekdaySymbols: [String] {
+        let symbols = calendar.veryShortStandaloneWeekdaySymbols
+        let firstWeekdayIndex = max(0, min(calendar.firstWeekday - 1, symbols.count - 1))
+        return Array(symbols[firstWeekdayIndex...]) + Array(symbols[..<firstWeekdayIndex])
+    }
+
+    private var monthCells: [MonthlyTrendDayCell] {
+        guard let monthInterval = calendar.dateInterval(of: .month, for: month) else { return [] }
+
+        let startOfMonth = monthInterval.start
+        let range = calendar.range(of: .day, in: .month, for: startOfMonth) ?? 1..<2
+        let weekday = calendar.component(.weekday, from: startOfMonth)
+        let leadingSlots = (weekday - calendar.firstWeekday + 7) % 7
+
+        var cells = Array(repeating: MonthlyTrendDayCell.empty, count: leadingSlots)
+        cells += range.compactMap { day -> MonthlyTrendDayCell? in
+            guard let date = calendar.date(byAdding: .day, value: day - 1, to: startOfMonth) else { return nil }
+            let normalized = calendar.startOfDay(for: date)
+            return MonthlyTrendDayCell(
+                date: normalized,
+                severity: dailySeverity[normalized] ?? 0,
+                isToday: calendar.isDateInToday(normalized)
+            )
+        }
+
+        let trailingSlots = (7 - (cells.count % 7)) % 7
+        cells += Array(repeating: MonthlyTrendDayCell.empty, count: trailingSlots)
+        return cells
+    }
+
+    private func backgroundColor(for severity: Int) -> Color {
+        switch severity {
+        case 1...3:
+            return tint.opacity(0.30)
+        case 4...6:
+            return tint.opacity(0.58)
+        case 7...10:
+            return CalmTheme.coral.opacity(0.78)
+        default:
+            return .primary.opacity(0.06)
+        }
+    }
+
+    private func accessibilityLabel(for cell: MonthlyTrendDayCell) -> String {
+        guard let date = cell.date else { return "" }
+        let dateText = date.formatted(.dateTime.weekday(.wide).month(.wide).day())
+        if cell.severity == 0 {
+            return "\(dateText), no migraines logged"
+        }
+        return "\(dateText), maximum intensity \(cell.severity) out of 10"
+    }
+}
+
+struct MonthlyTrendDayCell {
+    let date: Date?
+    let severity: Int
+    let isToday: Bool
+
+    static let empty = MonthlyTrendDayCell(date: nil, severity: 0, isToday: false)
+}
+
 struct IntensityBadge: View {
     let intensity: Int
 
