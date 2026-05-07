@@ -1,6 +1,13 @@
 import SwiftData
 import SwiftUI
 
+enum TrendRange: String, CaseIterable, Identifiable {
+    case week = "Week"
+    case month = "Month"
+
+    var id: String { rawValue }
+}
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \MigraineEntry.startDate, order: .reverse) private var entries: [MigraineEntry]
@@ -70,6 +77,7 @@ struct HomeDashboardView: View {
     let entries: [MigraineEntry]
     let quickLog: () -> Void
     let comfortMode: () -> Void
+    @State private var trendRange: TrendRange = .week
 
     var body: some View {
         PageShell(title: greeting, subtitle: "A quiet place to notice patterns and care for yourself.") {
@@ -132,8 +140,50 @@ struct HomeDashboardView: View {
     }
 
     private var trendCard: some View {
-        CalmCard(title: "Weekly trend", systemImage: "waveform.path.ecg", tint: CalmTheme.lavender) {
-            SoftBarChart(values: weeklyCounts)
+        CalmCard(title: "Trend", systemImage: "waveform.path.ecg", tint: CalmTheme.lavender) {
+            HStack(spacing: 10) {
+                ForEach(TrendRange.allCases) { range in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            trendRange = range
+                        }
+                    } label: {
+                        Text(range.rawValue)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(trendRange == range ? CalmTheme.deepNavy : .secondary)
+                            .frame(maxWidth: .infinity, minHeight: 38)
+                            .background(
+                                Group {
+                                    if trendRange == range {
+                                        Capsule()
+                                            .fill(CalmTheme.warmOffWhite.opacity(0.95))
+                                    } else {
+                                        Capsule()
+                                            .fill(.clear)
+                                    }
+                                }
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("\(range.rawValue) trend")
+                    .accessibilityAddTraits(trendRange == range ? .isSelected : [])
+                }
+            }
+            .padding(6)
+            .background(CalmTheme.lavender.opacity(0.14), in: Capsule())
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Trend range")
+
+            Group {
+                switch trendRange {
+                case .week:
+                    SoftBarChart(values: weeklyCounts)
+                case .month:
+                    MonthlyTrendCalendar(month: .now, dailySeverity: monthlySeverityByDay)
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: trendRange)
+
             HStack {
                 Label("\(entriesThisMonth) this month", systemImage: "calendar")
                 Spacer()
@@ -212,6 +262,15 @@ struct HomeDashboardView: View {
         return (0..<7).map { offset in
             let day = calendar.date(byAdding: .day, value: offset - 6, to: .now) ?? .now
             return entries.filter { calendar.isDate($0.startDate, inSameDayAs: day) }.count
+        }
+    }
+
+    private var monthlySeverityByDay: [Date: Int] {
+        let calendar = Calendar.current
+        return entries.reduce(into: [Date: Int]()) { result, entry in
+            guard calendar.isDate(entry.startDate, equalTo: .now, toGranularity: .month) else { return }
+            let day = calendar.startOfDay(for: entry.startDate)
+            result[day] = max(result[day] ?? 0, entry.intensity)
         }
     }
 
