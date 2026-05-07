@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct migraine_tracketApp: App {
@@ -13,5 +14,6 @@ struct migraine_tracketApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [MigraineEntry.self, MedicationDose.self, AppSettings.self])
     }
 }

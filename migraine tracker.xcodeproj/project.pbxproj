@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		C3A2AC122FACB540003669F7 /* migraine tracket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "migraine tracket.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3A2AC122FACB540003669F7 /* migraine tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "migraine tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -40,7 +40,7 @@
 		C3A2AC132FACB540003669F7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C3A2AC122FACB540003669F7 /* migraine tracket.app */,
+				C3A2AC122FACB540003669F7 /* migraine tracker.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C3A2AC112FACB540003669F7 /* migraine tracket */ = {
+		C3A2AC112FACB540003669F7 /* migraine tracker */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C3A2AC1D2FACB541003669F7 /* Build configuration list for PBXNativeTarget "migraine tracket" */;
+			buildConfigurationList = C3A2AC1D2FACB541003669F7 /* Build configuration list for PBXNativeTarget "migraine tracker" */;
 			buildPhases = (
 				C3A2AC0E2FACB540003669F7 /* Sources */,
 				C3A2AC0F2FACB540003669F7 /* Frameworks */,
@@ -63,11 +63,11 @@
 			fileSystemSynchronizedGroups = (
 				C3A2AC142FACB540003669F7 /* migraine tracket */,
 			);
-			name = "migraine tracket";
+			name = "migraine tracker";
 			packageProductDependencies = (
 			);
 			productName = "migraine tracket";
-			productReference = C3A2AC122FACB540003669F7 /* migraine tracket.app */;
+			productReference = C3A2AC122FACB540003669F7 /* migraine tracker.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C3A2AC0D2FACB540003669F7 /* Build configuration list for PBXProject "migraine tracket" */;
+			buildConfigurationList = C3A2AC0D2FACB540003669F7 /* Build configuration list for PBXProject "migraine tracker" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C3A2AC112FACB540003669F7 /* migraine tracket */,
+				C3A2AC112FACB540003669F7 /* migraine tracker */,
 			);
 		};
 /* End PBXProject section */
@@ -309,7 +309,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C3A2AC0D2FACB540003669F7 /* Build configuration list for PBXProject "migraine tracket" */ = {
+		C3A2AC0D2FACB540003669F7 /* Build configuration list for PBXProject "migraine tracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C3A2AC1B2FACB541003669F7 /* Debug */,
@@ -318,7 +318,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C3A2AC1D2FACB541003669F7 /* Build configuration list for PBXNativeTarget "migraine tracket" */ = {
+		C3A2AC1D2FACB541003669F7 /* Build configuration list for PBXNativeTarget "migraine tracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C3A2AC1E2FACB541003669F7 /* Debug */,
